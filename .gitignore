@@ -2,6 +2,11 @@
 __pycache__/
 *.py[codz]
 *$py.class
+*.pyc
+output/*.pdf
+.DS_Store
+venv/
+.venv/
 
 # C extensions
 *.so

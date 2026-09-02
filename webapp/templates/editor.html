@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CV editor</title>
+<style>
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-Regular.ttf');
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-SemiBold.ttf');
+    font-weight: 600;
+  }
+
+  :root {
+    --desk: #dedad3;
+    --panel: #ffffff;
+    --edge: #c5bfb6;
+    --ink: #23211e;
+    --ink-soft: #6d6862;
+    --accent: #2f4a72;
+    --accent-hover: #24395a;
+    --warn: #9a3412;
+    --ok: #3f6b45;
+
+    /* Editor surface and syntax palette */
+    --code-bg: #fbfaf8;
+    --syn-section: #1f3a63;
+    --syn-section-bg: #e4ebf5;
+    --syn-key: #8a5320;
+    --syn-value: #2b2926;
+    --syn-literal: #6b3fa0;
+    --syn-punct: #a9a199;
+    --syn-comment: #78857a;
+
+    /* Shared editor metrics — the highlight layer and the textarea MUST use
+       identical values or the caret drifts away from the colored text. */
+    --code-font: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+    --code-size: 12.5px;
+    --code-leading: 1.7;
+    --code-pad-y: 16px;
+    --code-pad-x: 18px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--desk);
+    color: var(--ink);
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---- Top bar ---- */
+  header {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 18px;
+    height: 52px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--edge);
+  }
+
+  .title { font-weight: 600; font-size: 14px; letter-spacing: -0.1px; }
+
+  .status { font-size: 12.5px; color: var(--ink-soft); flex: 1; }
+  .status[data-state="error"] { color: var(--warn); }
+  .status[data-state="saved"] { color: var(--ok); }
+
+  button {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 5px;
+    border: 1px solid var(--edge);
+    background: var(--panel);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  button:hover { background: #f4f2ef; }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  button.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  button.primary:hover { background: var(--accent-hover); }
+
+  /* ---- Split layout ---- */
+  main { flex: 1; display: flex; min-height: 0; }
+
+  .pane {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .pane-source { width: 44%; background: var(--panel); }
+  .pane-output { flex: 1; position: relative; }
+
+  .pane-label {
+    flex: none;
+    padding: 9px 18px;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--edge);
+  }
+  .pane-output .pane-label { border-bottom: none; }
+
+  /* ---- YAML editor: a transparent textarea layered over a colored mirror ---- */
+  .editor {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    background: var(--code-bg);
+  }
+
+  .editor-highlight,
+  .editor-input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    border: none;
+    padding: var(--code-pad-y) var(--code-pad-x);
+    font-family: var(--code-font);
+    font-size: var(--code-size);
+    line-height: var(--code-leading);
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    tab-size: 2;
+  }
+
+  .editor-highlight {
+    overflow: auto;
+    pointer-events: none;
+    color: var(--syn-value);
+  }
+
+  .editor-input {
+    overflow: auto;
+    resize: none;
+    background: transparent;
+    color: transparent;
+    caret-color: var(--accent);
+  }
+  .editor-input:focus { outline: none; }
+  .editor-input::selection { background: rgba(47, 74, 114, 0.22); }
+
+  /* Syntax tokens — color and weight only. Any padding, letter-spacing or
+     font-size change here would break alignment with the textarea. */
+  .t-section {
+    color: var(--syn-section);
+    font-weight: 700;
+    background: var(--syn-section-bg);
+  }
+  .t-key { color: var(--syn-key); }
+  .t-value { color: var(--syn-value); }
+  .t-literal { color: var(--syn-literal); }
+  .t-punct { color: var(--syn-punct); }
+  .t-comment { color: var(--syn-comment); font-style: italic; }
+
+  .divider {
+    flex: none;
+    width: 5px;
+    background: var(--edge);
+    cursor: col-resize;
+  }
+  .divider:hover { background: var(--accent); }
+
+  /* ---- Preview ---- */
+  .preview-frame {
+    flex: 1;
+    margin: 0 18px 18px 18px;
+    border: none;
+    border-radius: 2px;
+    background: #fff;
+    box-shadow: 0 2px 14px rgba(0,0,0,0.18);
+    min-height: 0;
+  }
+
+  .error-box {
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
+    background: #fff;
+    border: 1px solid var(--warn);
+    border-left-width: 3px;
+    border-radius: 3px;
+    padding: 12px 14px;
+    font-family: var(--code-font);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--warn);
+    white-space: pre-wrap;
+    max-height: 40%;
+    overflow: auto;
+    display: none;
+  }
+  .error-box.visible { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="title">CV editor</span>
+  <span class="status" id="status">Ready</span>
+  <button id="save">Save to file</button>
+  <button id="download" class="primary">Download PDF</button>
+</header>
+
+<main>
+  <section class="pane pane-source">
+    <div class="pane-label">cv_data.yaml</div>
+    <div class="editor">
+      <pre class="editor-highlight" id="highlight" aria-hidden="true"></pre>
+      <textarea class="editor-input" id="yaml" spellcheck="false"
+        autocomplete="off" autocapitalize="off" autocorrect="off">{{ initial_yaml }}</textarea>
+    </div>
+  </section>
+
+  <div class="divider" id="divider"></div>
+
+  <section class="pane pane-output">
+    <div class="pane-label">Preview</div>
+    <iframe class="preview-frame" id="preview" title="CV preview"></iframe>
+    <div class="error-box" id="error"></div>
+  </section>
+</main>
+
+<script>
+  const yamlEl = document.getElementById('yaml');
+  const highlightEl = document.getElementById('highlight');
+  const previewEl = document.getElementById('preview');
+  const statusEl = document.getElementById('status');
+  const errorEl = document.getElementById('error');
+
+  let debounceTimer = null;
+  let currentBlobUrl = null;
+
+  /* ---------- YAML syntax highlighting ---------- */
+
+  function escapeHtml(text) {
+    return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function highlightValue(value) {
+    const withComment = value.match(/^(.*?)(\s+#.*)$/);
+    if (withComment) {
+      return highlightValue(withComment[1]) +
+        '<span class="t-comment">' + escapeHtml(withComment[2]) + '</span>';
+    }
+    const trimmed = value.trim();
+    if (/^(null|true|false|~)$/i.test(trimmed) || /^-?\d+(\.\d+)?$/.test(trimmed)) {
+      return '<span class="t-literal">' + escapeHtml(value) + '</span>';
+    }
+    return '<span class="t-value">' + escapeHtml(value) + '</span>';
+  }
+
+  function highlightLine(line) {
+    if (line.trim() === '') return '';
+
+    const commentMatch = line.match(/^(\s*)(#.*)$/);
+    if (commentMatch) {
+      return escapeHtml(commentMatch[1]) +
+        '<span class="t-comment">' + escapeHtml(commentMatch[2]) + '</span>';
+    }
+
+    const structure = line.match(/^(\s*)(-\s+|-$)?(.*)$/);
+    const indent = structure[1];
+    const dash = structure[2] || '';
+    const rest = structure[3];
+
+    let html = escapeHtml(indent);
+    if (dash) html += '<span class="t-punct">' + escapeHtml(dash) + '</span>';
+
+    const kv = rest.match(/^([A-Za-z_][\w\- ]*)(:)(\s*)(.*)$/);
+    if (kv) {
+      const key = kv[1], colon = kv[2], space = kv[3], value = kv[4];
+      // A key at column 0 with no dash is a top-level section.
+      const keyClass = (indent.length === 0 && !dash) ? 't-section' : 't-key';
+      html += '<span class="' + keyClass + '">' + escapeHtml(key) + '</span>';
+      html += '<span class="t-punct">' + colon + '</span>' + escapeHtml(space);
+      if (value) html += highlightValue(value);
+      return html;
+    }
+
+    if (rest) html += highlightValue(rest);
+    return html;
+  }
+
+  function paintHighlight() {
+    // The trailing space keeps the final newline from collapsing, so the
+    // mirror stays exactly as tall as the textarea's content.
+    highlightEl.innerHTML = yamlEl.value.split('\n').map(highlightLine).join('\n') + ' ';
+    syncScroll();
+  }
+
+  function syncScroll() {
+    highlightEl.scrollTop = yamlEl.scrollTop;
+    highlightEl.scrollLeft = yamlEl.scrollLeft;
+  }
+
+  /* ---------- Preview ---------- */
+
+  function setStatus(text, state) {
+    statusEl.textContent = text;
+    if (state) {
+      statusEl.dataset.state = state;
+    } else {
+      delete statusEl.dataset.state;
+    }
+  }
+
+  function showError(message) {
+    errorEl.textContent = message;
+    errorEl.classList.add('visible');
+  }
+
+  function clearError() {
+    errorEl.classList.remove('visible');
+  }
+
+  async function refreshPreview() {
+    setStatus('Updating preview…');
+    try {
+      const response = await fetch('/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: yamlEl.value
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        showError(data.error || 'Could not render the CV.');
+        setStatus('Preview not updated', 'error');
+        return;
+      }
+
+      const blob = await response.blob();
+      if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+      currentBlobUrl = URL.createObjectURL(blob);
+      previewEl.src = currentBlobUrl;
+
+      clearError();
+      setStatus('Preview up to date');
+    } catch (err) {
+      showError(String(err));
+      setStatus('Preview not updated', 'error');
+    }
+  }
+
+  function scheduleRefresh() {
+    setStatus('Typing…');
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(refreshPreview, 700);
+  }
+
+  yamlEl.addEventListener('input', () => {
+    paintHighlight();
+    scheduleRefresh();
+  });
+  yamlEl.addEventListener('scroll', syncScroll);
+
+  // Tab inserts two spaces — YAML lives on indentation.
+  yamlEl.addEventListener('keydown', (event) => {
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      const start = yamlEl.selectionStart;
+      const end = yamlEl.selectionEnd;
+      yamlEl.value = yamlEl.value.slice(0, start) + '  ' + yamlEl.value.slice(end);
+      yamlEl.selectionStart = yamlEl.selectionEnd = start + 2;
+      paintHighlight();
+      scheduleRefresh();
+    }
+  });
+
+  document.getElementById('download').addEventListener('click', async () => {
+    setStatus('Building PDF…');
+    try {
+      const response = await fetch('/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: yamlEl.value
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        showError(data.error || 'Could not build the PDF.');
+        setStatus('Download failed', 'error');
+        return;
+      }
+
+      const blob = await response.blob();
+      const disposition = response.headers.get('Content-Disposition') || '';
+      const match = disposition.match(/filename="?([^"]+)"?/);
+      const filename = match ? match[1] : 'cv.pdf';
+
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(link.href);
+
+      clearError();
+      setStatus('PDF downloaded', 'saved');
+    } catch (err) {
+      showError(String(err));
+      setStatus('Download failed', 'error');
+    }
+  });
+
+  document.getElementById('save').addEventListener('click', async () => {
+    setStatus('Saving…');
+    const response = await fetch('/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: yamlEl.value
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      showError(data.error);
+      setStatus('Not saved', 'error');
+      return;
+    }
+    clearError();
+    setStatus('Saved to data/cv_data.yaml', 'saved');
+  });
+
+  // Draggable split
+  const divider = document.getElementById('divider');
+  const sourcePane = document.querySelector('.pane-source');
+  let dragging = false;
+
+  divider.addEventListener('mousedown', () => {
+    dragging = true;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  });
+
+  window.addEventListener('mousemove', (event) => {
+    if (!dragging) return;
+    const percent = (event.clientX / window.innerWidth) * 100;
+    if (percent > 20 && percent < 75) sourcePane.style.width = percent + '%';
+  });
+
+  window.addEventListener('mouseup', () => {
+    dragging = false;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  });
+
+  paintHighlight();
+  refreshPreview();
+</script>
+
+</body>
+</html>
