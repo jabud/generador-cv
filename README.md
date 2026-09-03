@@ -1,6 +1,6 @@
 # CV Generator
 
-Un editor local para tu CV: escribes tus datos en YAML del lado izquierdo y ves
+Un editor para tu CV: escribes tus datos en YAML del lado izquierdo y ves
 el PDF actualizarse en vivo del lado derecho. Cuando te gusta, lo descargas.
 
 También puede correr como comando de terminal, sin interfaz, si solo quieres
@@ -8,6 +8,20 @@ regenerar el PDF a partir del archivo de datos.
 
 El diseño vive en una plantilla HTML/CSS (`template/cv_template.html.j2`) y se
 convierte a PDF con [WeasyPrint](https://weasyprint.org/).
+
+## Usarlo sin instalar nada
+
+**https://cv-generator-5u6c.onrender.com/**
+
+Entra, edita el YAML de ejemplo con tus datos y descarga el PDF. No necesitas
+clonar el repo, tener Docker ni instalar Python — solo un navegador. Tu
+borrador se guarda automáticamente en tu propio navegador mientras escribes
+(no en el servidor), así que un refresh no te hace perder el trabajo; nada de
+lo que escribas ahí queda guardado para nadie más que tú.
+
+El resto de este README es para correrlo tú mismo — útil si quieres editar el
+diseño, tener el archivo YAML en tu propia máquina, o desplegar tu propia
+copia.
 
 ## Editor web (localhost)
 
@@ -20,8 +34,14 @@ docker run --rm -p 8080:5000 -v "$(pwd)/data:/app/data" cv-generator
 
 Abre http://localhost:8080
 
-El volumen de `data/` es lo que permite que el botón "Save to file" guarde tus
-cambios en tu máquina y no solo dentro del contenedor.
+El volumen de `data/` es lo que hace que el editor arranque pre-cargado con
+tu `cv_data.yaml`. Para guardar cambios de forma permanente, edita ese
+archivo directamente (con tu editor de texto de siempre, o en modo comando
+con `generate_cv.py`) — el editor web es solo para escribir con
+syntax-highlighting, ver el preview en vivo y descargar el PDF; no escribe
+nada al disco. Mientras escribes, tu borrador se guarda automáticamente en
+el navegador (no en el servidor) así que un refresh o cerrar la pestaña no
+te hace perder el trabajo.
 
 ### Sin Docker
 
@@ -43,7 +63,8 @@ Abre http://localhost:5000 (o usa `--port 8080` para otro puerto).
 | Botón | Qué hace |
 |---|---|
 | *(automático)* | El preview se actualiza solo, ~0.7s después de que dejas de escribir |
-| **Save to file** | Guarda el YAML del editor en `data/cv_data.yaml` |
+| *(automático)* | Tu borrador se guarda solo en el navegador (`localStorage`), para no perderlo con un refresh |
+| **Discard local draft** | Solo aparece si hay un borrador restaurado; lo descarta y vuelve al `cv_data.yaml` que cargó el servidor |
 | **Download PDF** | Descarga el PDF con el nombre `TuNombre_CV.pdf` |
 
 Si el YAML tiene un error de sintaxis, aparece un mensaje abajo del preview con

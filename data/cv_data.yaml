@@ -1,3 +1,6 @@
+# Bartleby, the Scrivener isn't listed anywhere on this CV, but he's in
+# here somewhere. He kept a jar of ginger nuts at his desk and would
+# prefer not to explain why.
 name: Juan Bartleby
 headline: Data Scientist
 
@@ -5,172 +8,76 @@ contact:
   email: juan.bartleby@example.com
   telegram: {label: "telegram.me/juan_bartleby", url: "http://telegram.me/juan_bartleby"}
   linkedin: {label: "in/juanbartleby/", url: "https://www.linkedin.com/in/juanbartleby/"}
-  website: {label: "juanbartleby.dev/", url: "https://juanbartleby.dev/"}
+  website: {label: "juanbartleby.dev", url: "https://juanbartleby.dev/"}
 
 about:
-  lead: "My professional background has led me to take on multiple roles across various industries:"
-  bullets:
-    - "I started my career as a production engineer in the marine industry, designing propellers for ships."
-    - "I have worked as a data engineer in the real estate sector, building ETL pipelines and scrapers."
-    - "I've been a software developer at a consulting firm."
-    - "I also worked independently as a Python developer and data scientist on projects in the marketing, cloud computing, and ride-hailing industries."
-    - "I have grown as a data scientist in the fintech industry, leading projects that supported decision-making and had an impact on risk management, customer behavior, and product growth, while also ensuring that processes remained optimized and standardized."
-  closing: "Currently as a Lead Data Scientist at UP.Labs, I am helping grow a new venture-backed startup from the ground up, working on solving major challenges and revolutionizing the transportation industry through data, data science, and artificial intelligence."
+  lead: "This is example data — replace it with your own. Juan Bartleby's career has moved between a small consulting shop on Wall Street and a boutique analytics firm, always gravitating toward forecasting and pricing work."
+  bullets: []
+  closing: "He currently works as a Senior Data Scientist, and — much like a certain scrivener he's occasionally compared to — would prefer not to attend meetings that could have been an email."
 
 # Each item is a company. "roles" is a list — one item for a single position,
 # several for promotions within the same company (rendered with a connecting timeline).
 experience:
-  - company: "UP.Labs"
-    url: "https://up.partners/labs/"
+  # --- Promotion case: two roles, same company, one step up ---
+  - company: "Turkey & Nippers Consulting"
+    url: "https://turkeynippers.example.com/"
     roles:
-      - title: "Lead Data Scientist"
-        dates: "Nov 2025 - Present"
-        bullets:
-          - "Helping grow a new startup from the ground up, which secured <strong>~$3M USD in funding</strong> to operate through its first year."
-          - "<strong>Leading the data team</strong> and overseeing <strong>analytics, data science, and data engineering</strong> projects."
-          - "<strong>Designing team roadmaps</strong> and maintaining <strong>constant cross-functional communication</strong> with different teams and functions across the startup."
       - title: "Senior Data Scientist"
-        dates: "May 2025 - Nov 2025"
+        dates: "Jan 2024 - Present"
         bullets:
-          - "Building data driven startups."
+          - "Leads pricing model design for the firm's logistics clients; when asked to join a third recurring status meeting in one week, would prefer not to."
+          - "Mentors two junior analysts, insisting every column be checked before it leaves the desk."
+      - title: "Data Analyst"
+        dates: "Jan 2022 - Jan 2024"
+        bullets:
+          - "Built the firm's first standardized weekly reporting pipeline, replacing a stack of hand-copied spreadsheets."
+          - "Reviewed every row of every dataset so methodically that colleagues joked he'd have made an excellent copyist."
 
-  - company: "Bankaya"
-    url: "http://bankaya.com.mx/"
+  # --- No-promotion case: single role, same title the whole tenure ---
+  - company: "Wall Street Analytics"
+    url: "https://wallstreetanalytics.example.com/"
     roles:
-      - title: "Lead Data Scientist"
-        dates: "Jun 2023 - Feb 2025"
-        bullets:
-          - "Led a team of data scientists, providing technical guidance and driving risk and fraud detection initiatives."
-          - "Designed, trained, and deployed machine learning models for risk and fraud across all company products, <strong>improving bad rates while maintaining approval rates</strong>."
-          - "<strong>Increased fraud detection related to unwillingness to pay across the portfolio</strong>, enhancing risk assessment and mitigation strategies."
-          - "Developed an internal <strong>Python library</strong> to streamline the data science workflow, <strong>reducing development time and ensuring standardization</strong>."
-          - "<strong>Architected the feature store</strong> and built scalable pipelines for <strong>training data generation and real-time feature serving in production</strong>."
-          - "Established standardized processes and templates for <strong>model training, evaluation, monitoring, and feature engineering</strong>, significantly <strong>reducing time-to-first baseline model and time-to-deployment</strong>."
-          - "Defined <strong>cross-functional collaboration strategies</strong> with business teams, implemented <strong>best practices for data science operations</strong>, and maintained <strong>comprehensive documentation</strong>."
-          - "Assessed data providers, conducted <strong>proof-of-concept experiments</strong>, and recommended high-value <strong>data integrations</strong> to enhance model performance and business impact."
-          - "Designed and evaluated <strong>A/B tests</strong>, performing <strong>power analysis and statistical tests</strong> to determine <strong>sample sizes, experiment duration, and data-driven decisions</strong> for <strong>credit offers and product optimizations</strong>."
-
-  - company: "Konfío"
-    url: "https://konfio.mx/"
-    roles:
-      - title: "Lead Data Scientist"
-        dates: "Apr 2023 - Jun 2023"
-        bullets:
-          - "Mentored data scientists, providing <strong>technical guidance</strong> to refine project details while fostering <strong>independence and skill development</strong>."
-          - "Led <strong>data science projects for collections</strong>, collaborating with stakeholders to <strong>prioritize initiatives</strong>, design <strong>machine learning solutions</strong>, and <strong>communicate updates and results</strong> effectively."
-      - title: "Senior Data Scientist"
-        dates: "May 2021 - Apr 2023"
-        bullets:
-          - "<strong>Developed early warning detection systems</strong> to help the collections team take proactive action at both <strong>industry and client levels</strong>."
-          - "Built an <strong>income estimation model</strong> to assign credit lines to clients with <strong>incomplete financial data</strong>, improving credit decisioning."
-          - "Designed a <strong>customer lifetime value (CLV) model</strong> to forecast revenue from card clients, supporting <strong>long-term profitability strategies</strong>."
-          - "Developed a <strong>customer churn prediction model</strong>, enabling targeted retention strategies for high-risk clients."
-          - "Created a <strong>propensity model</strong> to estimate customer likelihood of accepting <strong>credit line offers</strong>, optimizing sales team prioritization."
-          - "<strong>Enhanced internal data science tools</strong> to improve efficiency in <strong>model monitoring and debugging</strong>, reducing troubleshooting time."
       - title: "Data Scientist"
-        dates: "Nov 2019 - May 2021"
+        dates: "Mar 2019 - Dec 2021"
         bullets:
-          - "<strong>Collaborated across three squads</strong>—Growth, Risk, and Collections—delivering data-driven solutions tailored to each domain."
-          - "Developed a <strong>time series model</strong> to analyze <strong>credit search behavior at the industry level</strong>, identifying trends and market shifts."
-          - "Built a <strong>risk estimation model</strong> for <strong>recurring working capital clients</strong>, improving credit decisioning and risk management."
-          - "Designed a <strong>collection optimization model</strong> to predict the <strong>best date to collect payments from clients</strong>, enhancing recovery rates and operational efficiency."
-
-  - company: "Self-employed"
-    url: null
-    roles:
-      - title: "Data Scientist - Python Developer"
-        dates: "Feb 2018 - Nov 2019"
-        bullets:
-          - "<strong>@San pancho (now jellyfish):</strong> Conducted <strong>descriptive data analysis</strong> to identify <strong>customer segments and behavioral patterns</strong>. Developed a <strong>forecasting model</strong> to predict trends in customer behavior, optimizing <strong>targeting strategies</strong>."
-          - "<strong>@Teranalytics:</strong> Designed a <strong>business model for a new product</strong> using <strong>Monte Carlo simulations</strong>. Built a <strong>web-based platform</strong> to visualize results, enabling clients to make <strong>data-driven business decisions</strong> based on future projections."
-          - "<strong>@BlackInnTech:</strong> Developed an <strong>ETL pipeline</strong> and leveraged <strong>NLP models</strong> to process <strong>unstructured text data</strong>, extracting key insights for <strong>background checks and driver hiring</strong> for a major transportation services app."
-          - "<strong>@Sanabria:</strong> Assisted with <strong>web development</strong> and <strong>IT support</strong> tasks."
-
-  - company: "Kalypso"
-    url: "http://kalypso.com/"
-    roles:
-      - title: "Senior Developer"
-        dates: "Apr 2017 - Feb 2018"
-        bullets:
-          - "<strong>Developed software solutions</strong> for the <strong>Product Life-Cycle Management (PLM) consulting team</strong>, enhancing process efficiency and data management."
-          - "<strong>Tech stack:</strong> Java, Oracle platform."
-
-  - company: "Intelimetrica"
-    url: "http://intelimetrica.com/"
-    roles:
-      - title: "Lead Data Engineer"
-        dates: "Jul 2016 - Apr 2017"
-        bullets:
-          - "Led the <strong>development and maintenance of an ETL system</strong> for <strong>real estate data</strong>, ensuring a reliable data pipeline for company services and analytics."
-          - "Developed <strong>NLP models</strong> to extract <strong>key insights from real estate data</strong>, enhancing <strong>new features</strong> for predictive models in the company."
-      - title: "Data Engineer"
-        dates: "Mar 2016 - Jul 2016"
-        bullets:
-          - "Developed and maintained <strong>web scrapers</strong>, ensuring <strong>efficient data extraction</strong> for real estate analysis."
-
-  - company: "Rice Propulsion"
-    url: "http://ricepropulsion.com/"
-    roles:
-      - title: "Production Engineer"
-        dates: "2013 - 2014"
-        bullets:
-          - "<strong>Contributed to the design phase</strong> of the <strong>marine propeller production process</strong>, optimizing efficiency and performance."
-          - "Worked on the <strong>mechanical design</strong> and performed <strong>stress-strain analysis</strong> for a new product, ensuring structural integrity and reliability."
+          - "Built a claims fraud detection model and a customer churn model for the retention team."
+          - "Preferred to work quietly at a desk facing the office's blank interior wall — colleagues said he barely looked up all day."
 
 education:
-  - title: "Cypher Fundamentals"
-    url: "https://graphacademy.neo4j.com/c/990c4cf7-f1de-4a88-a9d4-163bb25ee4ad/"
-    subtitle: "Certificate ID: 990c4cf7-f1de-4a88-a9d4-163bb25ee4ad"
-  - title: "Experimental Design Basics"
-    url: "https://coursera.org/share/92238e4306f0fdf12620664bff4f7f67"
-    subtitle: "Certificate ID: 92238e4306f0fdf12620664bff4f7f67"
-  - title: "A Crash Course in Causality: Inferring Causal Effects from Observational Data"
-    url: "https://coursera.org/share/48a72e1b6d07e85be20c8f93709c23b1"
-    subtitle: "Certificate ID: 48a72e1b6d07e85be20c8f93709c23b1"
-  - title: "Perform data science with Azure Databricks"
-    url: "https://coursera.org/share/2c3d06a1771e6ab15a81159fafbc94d5"
-    subtitle: "Certificate ID: 2c3d06a1771e6ab15a81159fafbc94d5"
-  - title: "Microsoft Azure Databricks for Data Engineering"
-    url: "https://coursera.org/share/bb67deb56f7b56dddb9ed18a6ef23aaa"
-    subtitle: "Certificate ID: bb67deb56f7b56dddb9ed18a6ef23aaa"
-  - title: "BSc Mechatronics Engineering"
+  - title: "MSc in Data Science"
     url: null
-    subtitle: "Instituto Tecnológico y de Estudios Superiores de Monterrey, Campus Guadalajara."
+    subtitle: "Universidad Ejemplo, 2016-2017."
+  - title: "BSc in Statistics"
+    url: null
+    subtitle: "Universidad Ejemplo, 2011-2015."
+  - title: "Machine Learning Specialization"
+    url: "https://coursera.org/share/example-cert-id-0001"
+    subtitle: "Certificate ID: example-cert-id-0001"
 
 projects:
-  - title: "QR generator"
-    body: 'I was curious about pyscript and I created a github page with a <a href="https://juanbartleby.dev/qr_code_generator/">QR code generator</a> using python and static website files.'
-  - title: "Math animations"
-    body: "Project to visualize and animate math objects and algorithms, using python and matplotlib."
-  - title: "CPMX8 A.I. and Robotics Hackathon"
-    body: "The team and I developed a computer vision model and a simple web application to activate a web-cam, recognize faces and classify them by sentiment. We played with keras, IBM watson and flask."
-  - title: "Sentiment Analysis Classifier"
-    body: "A just for fun and learning purposes project, I used Twitter API to extract text and then build a model to classify it by sentiment."
+  - title: "Dead Letter Classifier"
+    body: "A text classification side project to automatically route undeliverable emails — named after the job Bartleby is rumored to have held before this one, sorting mail addressed to no one in particular."
+  - title: "Forecasting benchmark"
+    body: "Compared classical (ARIMA, ETS) vs. gradient-boosted forecasting methods on a handful of public retail datasets, written up as a blog post."
 
 skills:
   - category: "Core Competencies"
     items:
-      - "Leadership"
-      - "Analytics & Data Science"
-      - "Data Governance"
-      - "MLOps"
-      - "Proof of Concept"
+      - "Forecasting"
+      - "A/B Testing"
+      - "Model Monitoring"
+      - "Data Storytelling"
   - category: "Libraries & frameworks"
     items:
-      - "Sklearn"
+      - "Scikit-learn"
+      - "LightGBM"
       - "Pandas"
-      - "Numpy"
-      - "Pyspark"
-      - "MLFlow"
-      - "statsmodels"
-      - "statsforecast"
+      - "Prophet"
   - category: "Languages & tools"
     items:
       - "Python"
+      - "SQL"
       - "Docker"
       - "Git"
-      - "Neo4j"
-      - "Databricks"
-      - "Claude Code"
 
 languages: "Spanish, English"

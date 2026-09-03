@@ -10,12 +10,30 @@ Usage:
 """
 import argparse
 import io
+import os
 
 from flask import Flask, jsonify, render_template, request, send_file, send_from_directory
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from cv_renderer import DEFAULT_DATA, FONTS_DIR, parse_yaml_string, render_pdf_bytes
 
 app = Flask(__name__, template_folder="webapp/templates", static_folder="webapp/static")
+
+# A CV in YAML is a few KB; this is generous headroom against someone
+# posting a huge body to /preview or /download on the public deploy.
+app.config["MAX_CONTENT_LENGTH"] = 256 * 1024
+
+# In-memory storage is fine as long as the app runs as a single worker/
+# instance (see Dockerfile) — with more than one process each would keep
+# its own counters, so a real multi-worker setup would need a shared
+# backend (e.g. Redis) for these limits to hold.
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["100 per minute"],
+    storage_uri="memory://",
+)
 
 
 @app.route("/fonts/<path:filename>")
@@ -35,7 +53,23 @@ def index():
     return render_template("editor.html", initial_yaml=initial_yaml)
 
 
+@app.errorhandler(413)
+def too_large(_exc):
+    """Same JSON error shape as the render errors below, so the frontend's
+    generic `response.json()` handling works here too instead of choking
+    on Werkzeug's default HTML error page."""
+    return jsonify({"error": "The YAML is too large."}), 413
+
+
+@app.errorhandler(429)
+def rate_limited(_exc):
+    """See too_large() above — same reasoning, this time for Flask-Limiter's
+    default HTML error page."""
+    return jsonify({"error": "Too many requests — wait a moment and try again."}), 429
+
+
 @app.route("/preview", methods=["POST"])
+@limiter.limit("40 per minute")
 def preview():
     """Render the posted YAML to a PDF and stream it back for the preview pane."""
     yaml_text = request.get_data(as_text=True)
@@ -56,6 +90,7 @@ def preview():
 
 
 @app.route("/download", methods=["POST"])
+@limiter.limit("20 per minute")
 def download():
     """Render the posted YAML and send it as a file download."""
     yaml_text = request.get_data(as_text=True)
@@ -78,23 +113,19 @@ def download():
     )
 
 
-@app.route("/save", methods=["POST"])
-def save():
-    """Optionally persist the current YAML back to data/cv_data.yaml."""
-    yaml_text = request.get_data(as_text=True)
-    try:
-        parse_yaml_string(yaml_text)  # validate before writing
-    except Exception as exc:
-        return jsonify({"error": f"Invalid YAML, not saved: {exc}"}), 400
-
-    with open(DEFAULT_DATA, "w", encoding="utf-8") as f:
-        f.write(yaml_text)
-    return jsonify({"status": "saved", "path": str(DEFAULT_DATA)})
-
-
 if __name__ == "__main__":
+    try:
+        default_port = int(os.environ.get("PORT", 5000))
+    except ValueError:
+        default_port = 5000
+
     parser = argparse.ArgumentParser(description="Run the local CV editor.")
-    parser.add_argument("--port", type=int, default=5000, help="Port (default: 5000)")
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=default_port,
+        help="Port (default: 5000, or $PORT if set)",
+    )
     parser.add_argument("--host", default="127.0.0.1", help="Host (default: 127.0.0.1)")
     args = parser.parse_args()
 
