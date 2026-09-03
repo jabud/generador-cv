@@ -10,6 +10,7 @@ Usage:
 """
 import argparse
 import io
+import os
 
 from flask import Flask, jsonify, render_template, request, send_file, send_from_directory
 
@@ -78,23 +79,14 @@ def download():
     )
 
 
-@app.route("/save", methods=["POST"])
-def save():
-    """Optionally persist the current YAML back to data/cv_data.yaml."""
-    yaml_text = request.get_data(as_text=True)
-    try:
-        parse_yaml_string(yaml_text)  # validate before writing
-    except Exception as exc:
-        return jsonify({"error": f"Invalid YAML, not saved: {exc}"}), 400
-
-    with open(DEFAULT_DATA, "w", encoding="utf-8") as f:
-        f.write(yaml_text)
-    return jsonify({"status": "saved", "path": str(DEFAULT_DATA)})
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run the local CV editor.")
-    parser.add_argument("--port", type=int, default=5000, help="Port (default: 5000)")
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=int(os.environ.get("PORT", 5000)),
+        help="Port (default: 5000, or $PORT if set)",
+    )
     parser.add_argument("--host", default="127.0.0.1", help="Host (default: 127.0.0.1)")
     args = parser.parse_args()
 

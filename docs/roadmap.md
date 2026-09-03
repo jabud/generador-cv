@@ -4,7 +4,17 @@ Plan de trabajo para llevar el generador de CV de "herramienta local" a "app
 pública" y agregarle un par de features. Cada sección es independiente; no
 hay que hacerlas en orden salvo donde se indique una dependencia.
 
-## 1. Preparar el repo para desplegar en Render
+## 1. Preparar el repo para desplegar en Render ✅ Hecho
+
+Implementado: `.dockerignore`, `PORT` leído del entorno con fallback a
+5000, `gunicorn` como servidor de producción (Dockerfile), `data/` ahora
+se copia a la imagen (antes solo llegaba por volumen — sin eso, un deploy
+sin volumen mostraba el editor vacío en vez del ejemplo de Bartleby),
+botón/ruta `/save` eliminados, y un `render.yaml` mínimo. Falta lo que no
+se puede probar desde acá: crear el Web Service en el dashboard de Render,
+conectar el repo y verificar el deploy real (pasos 4 y 5 de abajo siguen
+pendientes, son manuales).
+
 
 El objetivo es que el **mismo** `Dockerfile`/`app.py` sirvan para dos
 públicos distintos, sin mantener dos versiones del proyecto:
@@ -115,7 +125,8 @@ repo y quiera armar su propio CV.
    dos columnas, otra tipografía/paleta, etc.) — si no, el selector queda
    de adorno con una sola opción real.
 
-## 4. No perder el YAML al refrescar o cerrar la pestaña
+## 4. No perder el YAML al refrescar o cerrar la pestaña ✅ Hecho
+
 
 Objetivo: un autoguardado en el navegador (`localStorage`) que reemplaza
 por completo lo que hacía el botón "Save to file" (ver sección 1, donde se

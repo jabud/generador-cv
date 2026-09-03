@@ -222,7 +222,7 @@
 <header>
   <span class="title">CV editor</span>
   <span class="status" id="status">Ready</span>
-  <button id="save">Save to file</button>
+  <button id="discard-draft" hidden>Discard local draft</button>
   <button id="download" class="primary">Download PDF</button>
 </header>
 
@@ -251,9 +251,41 @@
   const previewEl = document.getElementById('preview');
   const statusEl = document.getElementById('status');
   const errorEl = document.getElementById('error');
+  const discardBtn = document.getElementById('discard-draft');
 
   let debounceTimer = null;
   let currentBlobUrl = null;
+
+  /* ---------- Local draft (autosave in this browser only) ----------
+     There is no server-side save: this is a per-browser safety net so a
+     refresh or an accidental tab close doesn't lose what you typed. */
+
+  const DRAFT_KEY = 'cv_editor_draft_v1';
+  const initialYaml = yamlEl.value; // value the server rendered, before any draft is applied
+
+  function loadDraft() {
+    try {
+      return localStorage.getItem(DRAFT_KEY);
+    } catch (err) {
+      return null; // private browsing / storage disabled — autosave just no-ops
+    }
+  }
+
+  function saveDraft(text) {
+    try {
+      localStorage.setItem(DRAFT_KEY, text);
+    } catch (err) {
+      // ignore — see loadDraft()
+    }
+  }
+
+  function clearDraft() {
+    try {
+      localStorage.removeItem(DRAFT_KEY);
+    } catch (err) {
+      // ignore
+    }
+  }
 
   /* ---------- YAML syntax highlighting ---------- */
 
@@ -375,6 +407,7 @@
 
   yamlEl.addEventListener('input', () => {
     paintHighlight();
+    saveDraft(yamlEl.value);
     scheduleRefresh();
   });
   yamlEl.addEventListener('scroll', syncScroll);
@@ -388,6 +421,7 @@
       yamlEl.value = yamlEl.value.slice(0, start) + '  ' + yamlEl.value.slice(end);
       yamlEl.selectionStart = yamlEl.selectionEnd = start + 2;
       paintHighlight();
+      saveDraft(yamlEl.value);
       scheduleRefresh();
     }
   });
@@ -427,22 +461,13 @@
     }
   });
 
-  document.getElementById('save').addEventListener('click', async () => {
-    setStatus('Saving…');
-    const response = await fetch('/save', {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: yamlEl.value
-    });
-    const data = await response.json();
-
-    if (!response.ok) {
-      showError(data.error);
-      setStatus('Not saved', 'error');
-      return;
-    }
-    clearError();
-    setStatus('Saved to data/cv_data.yaml', 'saved');
+  discardBtn.addEventListener('click', () => {
+    clearDraft();
+    yamlEl.value = initialYaml;
+    discardBtn.hidden = true;
+    paintHighlight();
+    scheduleRefresh();
+    setStatus('Draft discarded — back to data/cv_data.yaml');
   });
 
   // Draggable split
@@ -467,6 +492,13 @@
     document.body.style.cursor = '';
     document.body.style.userSelect = '';
   });
+
+  const draft = loadDraft();
+  if (draft !== null && draft !== initialYaml) {
+    yamlEl.value = draft;
+    discardBtn.hidden = false;
+    setStatus('Restored your local draft', 'saved');
+  }
 
   paintHighlight();
   refreshPreview();
