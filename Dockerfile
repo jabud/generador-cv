@@ -32,6 +32,10 @@ EXPOSE 5000
 
 # Default: run the web editor behind gunicorn (production-grade, unlike
 # Flask's dev server) on $PORT if set (Render sets this), else 5000.
+# --workers 1: free-tier hosts (e.g. Render's free plan) have very little
+# RAM, and each worker loads its own copy of WeasyPrint/Pango — 2 workers
+# was OOM-killing the process intermittently. One worker is plenty for a
+# low-traffic personal tool.
 # --timeout 60: WeasyPrint can take longer than gunicorn's 30s default,
 # especially on a cold worker. For the CLI instead, see the README.
-CMD ["sh", "-c", "gunicorn app:app --bind 0.0.0.0:${PORT:-5000} --workers 2 --timeout 60"]
+CMD ["sh", "-c", "gunicorn app:app --bind 0.0.0.0:${PORT:-5000} --workers 1 --timeout 60"]
