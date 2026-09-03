@@ -3,5 +3,6 @@ services:
     name: cv-generator
     runtime: docker
     plan: free
+    branch: dev
     dockerfilePath: ./Dockerfile
     healthCheckPath: /

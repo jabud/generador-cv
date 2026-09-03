@@ -1,6 +1,6 @@
 # CV Generator
 
-Un editor local para tu CV: escribes tus datos en YAML del lado izquierdo y ves
+Un editor para tu CV: escribes tus datos en YAML del lado izquierdo y ves
 el PDF actualizarse en vivo del lado derecho. Cuando te gusta, lo descargas.
 
 También puede correr como comando de terminal, sin interfaz, si solo quieres
@@ -8,6 +8,20 @@ regenerar el PDF a partir del archivo de datos.
 
 El diseño vive en una plantilla HTML/CSS (`template/cv_template.html.j2`) y se
 convierte a PDF con [WeasyPrint](https://weasyprint.org/).
+
+## Usarlo sin instalar nada
+
+**https://cv-generator-5u6c.onrender.com/**
+
+Entra, edita el YAML de ejemplo con tus datos y descarga el PDF. No necesitas
+clonar el repo, tener Docker ni instalar Python — solo un navegador. Tu
+borrador se guarda automáticamente en tu propio navegador mientras escribes
+(no en el servidor), así que un refresh no te hace perder el trabajo; nada de
+lo que escribas ahí queda guardado para nadie más que tú.
+
+El resto de este README es para correrlo tú mismo — útil si quieres editar el
+diseño, tener el archivo YAML en tu propia máquina, o desplegar tu propia
+copia.
 
 ## Editor web (localhost)
 
